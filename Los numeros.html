@@ -1,0 +1,938 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <link rel="icon" type="image/png" href="Logo de MS/Captura de pantalla 2026-10-08 173318.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>🧩 El Rompecabezas de los Números</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{
+  width:100%;height:100%;overflow:hidden;
+  font-family:'Press Start 2P','Courier New',monospace;
+  background-color:#1a1a2e;
+  background-image:
+    linear-gradient(45deg,#16213e 25%,transparent 25%),
+    linear-gradient(-45deg,#16213e 25%,transparent 25%),
+    linear-gradient(45deg,transparent 75%,#16213e 75%),
+    linear-gradient(-45deg,transparent 75%,#16213e 75%);
+  background-size:20px 20px;
+  background-position:0 0,0 10px,10px -10px,-10px 0px;
+  color:#fff;
+  touch-action:manipulation;
+  overscroll-behavior:none;
+  -webkit-overflow-scrolling:touch;
+}
+
+/* ============ PANTALLAS ============ */
+.screen{
+  position:fixed;inset:0;
+  display:none;
+  flex-direction:column;
+  align-items:center;justify-content:center;
+  text-align:center;
+  padding:16px;
+  z-index:10;
+  overflow:auto;
+}
+.screen.active{display:flex}
+#gameScreen.active{
+  padding:10px;
+  gap:12px;
+  justify-content:center;
+}
+
+/* ============ TÍTULOS Y BOTONES ============ */
+.bigTitle{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(18px,4vw,34px);
+  color:#ffcc00;
+  text-shadow:3px 3px 0 #ff6600,6px 6px 0 #000;
+  margin-bottom:22px;
+  letter-spacing:2px;line-height:1.7;
+}
+.bigText{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(10px,1.5vw,14px);
+  color:#fff;margin-bottom:20px;line-height:2.2;
+  text-shadow:2px 2px 0 #000;max-width:720px;
+  letter-spacing:.5px;
+}
+.bigBtn{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(11px,1.8vw,16px);
+  color:#fff;
+  background-color:#00b894;
+  background-image:repeating-linear-gradient(45deg,#00b894,#00b894 8px,#55efc4 8px,#55efc4 16px);
+  border:5px solid #fff;
+  padding:20px 44px;cursor:pointer;
+  box-shadow:6px 6px 0 #000,inset -3px -3px 0 rgba(0,0,0,.3);
+  text-shadow:2px 2px 0 #000;
+  transition:transform .08s steps(2);
+  letter-spacing:2px;
+  min-height:72px;min-width:280px;
+  margin:6px;touch-action:manipulation;
+  display:inline-block;
+}
+.bigBtn:active{transform:translate(4px,4px);box-shadow:2px 2px 0 #000}
+.bigBtn.purple{background-color:#6c5ce7;background-image:repeating-linear-gradient(-45deg,#6c5ce7,#6c5ce7 8px,#7d6ff0 8px,#7d6ff0 16px);box-shadow:6px 6px 0 #4834d4}
+.bigBtn.orange{background-color:#e17055;background-image:repeating-linear-gradient(45deg,#e17055,#e17055 8px,#fab1a0 8px,#fab1a0 16px);box-shadow:6px 6px 0 #a04028}
+.bigBtn.red{background-color:#d63031;background-image:repeating-linear-gradient(-45deg,#d63031,#d63031 8px,#ff7675 8px,#ff7675 12px);box-shadow:6px 6px 0 #8b1e1e}
+
+/* ============ CABECERA ============ */
+#topbar{
+  display:flex;align-items:center;justify-content:space-between;
+  gap:8px;width:100%;flex-wrap:nowrap;padding:0 4px;
+}
+#title{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(9px,1.3vw,13px);
+  color:#ffcc00;
+  text-shadow:2px 2px 0 #ff6600,4px 4px 0 #000;
+  letter-spacing:1px;white-space:nowrap;
+}
+#lvlInfo{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(9px,1.2vw,12px);
+  background:#5a3a1a;border:3px solid #fff;
+  padding:8px 14px;box-shadow:3px 3px 0 #000;
+  color:#ffcc00;text-shadow:2px 2px 0 #000;white-space:nowrap;
+}
+.pxbtn{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(9px,1.2vw,12px);
+  color:#fff;
+  background-color:#6c5ce7;
+  background-image:repeating-linear-gradient(-45deg,#6c5ce7,#6c5ce7 6px,#7d6ff0 6px,#7d6ff0 12px);
+  border:4px solid #fff;
+  padding:12px 16px;cursor:pointer;
+  box-shadow:4px 4px 0 #000,inset -2px -2px 0 rgba(0,0,0,.3);
+  text-shadow:2px 2px 0 #000;
+  transition:transform .08s steps(2);
+  letter-spacing:1px;
+  min-height:52px;min-width:60px;
+  touch-action:manipulation;
+}
+.pxbtn:active{transform:translate(3px,3px);box-shadow:1px 1px 0 #000}
+.pxbtn.orange{background-color:#e17055;background-image:repeating-linear-gradient(45deg,#e17055,#e17055 6px,#fab1a0 6px,#fab1a0 12px);box-shadow:4px 4px 0 #a04028}
+
+/* ============ INSTRUCCIONES ============ */
+.stepsBox{
+  display:flex;flex-direction:column;gap:16px;
+  max-width:640px;padding:22px 26px;
+  background-color:#0f0f23;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,#1a1a3e 2px,#1a1a3e 4px);
+  border:6px solid #fff;
+  box-shadow:8px 8px 0 #000,inset -4px -4px 0 rgba(0,0,0,.5);
+  margin-bottom:22px;
+}
+.step{
+  display:flex;align-items:center;gap:14px;
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(10px,1.4vw,14px);
+  color:#fff;text-align:left;line-height:2;
+  text-shadow:2px 2px 0 #000;
+}
+.stepIcon{
+  font-size:clamp(30px,4vw,44px);
+  flex-shrink:0;
+  filter:drop-shadow(2px 2px 0 #000);
+  line-height:1;
+}
+
+/* ============ GRID DE NIVELES (25) ============ */
+#lvlGrid{
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  max-width:min(700px,94vw);
+  width:100%;padding:18px;
+  background-color:#0f0f23;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,#1a1a3e 2px,#1a1a3e 4px);
+  border:6px solid #fff;
+  box-shadow:8px 8px 0 #000,inset -4px -4px 0 rgba(0,0,0,.5);
+  margin-bottom:20px;
+  max-height:65vh;
+  overflow-y:auto;
+}
+#lvlGrid::-webkit-scrollbar{width:10px}
+#lvlGrid::-webkit-scrollbar-track{background:#0f0f23}
+#lvlGrid::-webkit-scrollbar-thumb{background:#6c5ce7;border:2px solid #fff}
+.lvlBtn{
+  aspect-ratio:1/1;
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(14px,2vw,22px);
+  color:#fff;
+  background-color:#00b894;
+  background-image:repeating-linear-gradient(45deg,#00b894,#00b894 6px,#55efc4 6px,#55efc4 12px);
+  border:4px solid #fff;
+  cursor:pointer;
+  box-shadow:4px 4px 0 #000,inset -2px -2px 0 rgba(0,0,0,.3);
+  text-shadow:2px 2px 0 #000;
+  transition:transform .08s steps(2);
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  min-height:60px;
+  touch-action:manipulation;
+}
+.lvlBtn:active:not(.locked){transform:translate(2px,2px);box-shadow:2px 2px 0 #000}
+.lvlBtn.done{
+  background-color:#fdcb6e;
+  background-image:repeating-linear-gradient(-45deg,#fdcb6e,#fdcb6e 6px,#ffeaa7 6px,#ffeaa7 12px);
+  color:#2d3436;text-shadow:1px 1px 0 #fff;
+  box-shadow:4px 4px 0 #d4a017;
+}
+.lvlBtn.done::after{
+  content:"⭐";
+  position:absolute;bottom:-6px;right:-6px;
+  font-size:18px;
+  filter:drop-shadow(2px 2px 0 #000);
+}
+.lvlBtn.locked{
+  background-color:#636e72;
+  background-image:repeating-linear-gradient(90deg,#636e72,#636e72 6px,#b2bec3 6px,#b2bec3 12px);
+  cursor:not-allowed;opacity:.75;
+}
+.lvlBtn.locked::after{
+  content:"🔒";
+  position:absolute;
+  font-size:24px;
+  filter:drop-shadow(2px 2px 0 #000);
+}
+
+/* ============================================================
+   ZONA DE JUEGO — 1 pieza + 1 slot, AMBOS GIGANTES
+   ============================================================ */
+#gameArea{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:clamp(30px, 8vw, 100px);
+  width:100%;
+  flex:1;
+  min-height:0;
+  padding:10px;
+  flex-wrap:wrap;
+}
+
+.bigZone{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:14px;
+  padding:clamp(14px, 2.5vw, 24px);
+  background-color:#0f0f23;
+  background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,#1a1a3e 2px,#1a1a3e 4px);
+  border:5px solid #fff;
+  box-shadow:6px 6px 0 #000,inset -3px -3px 0 rgba(0,0,0,.5);
+  border-radius:6px;
+}
+
+.bigZoneTitle{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(10px,1.4vw,14px);
+  color:#ffcc00;
+  text-shadow:2px 2px 0 #000;
+  text-align:center;
+  letter-spacing:1px;
+}
+
+/* PIEZA Y SLOT GIGANTES */
+.bigPiece, .bigSlot{
+  width:clamp(140px, 22vw, 240px);
+  height:clamp(140px, 22vw, 240px);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(60px, 12vw, 130px);
+  font-weight:bold;
+  border:6px solid #fff;
+  border-radius:8px;
+  touch-action:none;
+  box-sizing:border-box;
+  transition:transform .1s steps(2), box-shadow .1s steps(2), border-color .1s;
+}
+
+/* PIEZA */
+.bigPiece{
+  color:#4a2a10;
+  background-color:#fdcb6e;
+  background-image:repeating-linear-gradient(45deg,#fdcb6e,#fdcb6e 8px,#ffeaa7 8px,#ffeaa7 16px);
+  cursor:grab;
+  text-shadow:3px 3px 0 #fff;
+  box-shadow:
+    6px 6px 0 #000,
+    inset -4px -4px 0 rgba(0,0,0,.2),
+    inset 4px 4px 0 rgba(255,255,255,.4);
+  user-select:none;
+  -webkit-user-drag:none;
+}
+.bigPiece:active{
+  cursor:grabbing;
+}
+.bigPiece.dragging{
+  opacity:.25;
+}
+.bigPiece.selected{
+  background-color:#fff3b8;
+  background-image:repeating-linear-gradient(45deg,#fff3b8,#fff3b8 8px,#fffadc 8px,#fffadc 16px);
+  box-shadow:
+    6px 6px 0 #000,
+    0 0 0 5px #55b9ed,
+    0 0 0 10px #fff,
+    inset -4px -4px 0 rgba(0,0,0,.2);
+  animation:bigPulse 1s ease-in-out infinite;
+}
+@keyframes bigPulse{
+  0%,100% { transform:scale(1); }
+  50% { transform:scale(1.05); }
+}
+.bigPiece.used{
+  opacity:.12;
+  cursor:default;
+  filter:grayscale(.7);
+  pointer-events:none;
+}
+
+/* SLOT */
+.bigSlot{
+  color:#fff;
+  background-color:#0f0f23;
+  border:6px dashed #8a90a8;
+  cursor:pointer;
+  text-shadow:3px 3px 0 #000;
+  position:relative;
+  user-select:none;
+}
+.bigSlot.hint{
+  border-color:#ffcc00;
+  border-style:solid;
+  animation:hintPulse 1.2s ease-in-out infinite;
+}
+@keyframes hintPulse{
+  0%,100% { box-shadow:0 0 0 0 rgba(255,204,0,.7), inset 0 0 15px rgba(255,204,0,.2); }
+  50% { box-shadow:0 0 0 10px rgba(255,204,0,0), inset 0 0 30px rgba(255,204,0,.5); }
+}
+.bigSlot.dragover{
+  border-color:#00ff88;
+  border-style:solid;
+  background-color:#1a3f2e;
+  box-shadow:0 0 0 6px #00ff88, 0 0 30px rgba(0,255,136,.7);
+  transform:scale(1.06);
+}
+.bigSlot.completed{
+  border:6px solid #00b894;
+  background-color:#1a5f4a;
+  background-image:repeating-linear-gradient(45deg,#1a5f4a,#1a5f4a 8px,#2a8060 8px,#2a8060 16px);
+  color:#fff;
+  text-shadow:3px 3px 0 #000;
+  animation:snapPop .6s cubic-bezier(.5,1.8,.5,1);
+}
+@keyframes snapPop{
+  0%{transform:scale(1)}
+  40%{transform:scale(1.15)}
+  100%{transform:scale(1)}
+}
+.bigSlot.error{
+  animation:shakeError .4s ease;
+  border-color:#ff3b3b;
+  background-color:#3a0f0f;
+}
+@keyframes shakeError{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-10px)}
+  75%{transform:translateX(10px)}
+}
+.question{
+  color:#8a90a8;
+  font-size:clamp(60px, 12vw, 130px);
+  text-shadow:3px 3px 0 #000;
+}
+
+/* Flecha entre las dos cajas */
+.arrow{
+  font-size:clamp(30px, 5vw, 60px);
+  color:#ffcc00;
+  text-shadow:2px 2px 0 #000;
+  animation:arrowPulse 1.2s ease-in-out infinite;
+}
+@keyframes arrowPulse{
+  0%,100% { transform:translateX(0); opacity:1; }
+  50% { transform:translateX(8px); opacity:.7; }
+}
+
+/* ============ MENSAJES ============ */
+#msg{
+  position:fixed;top:14%;left:50%;transform:translateX(-50%);
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(10px,1.5vw,15px);
+  color:#ffd700;
+  background:rgba(60,40,20,.95);
+  padding:14px 24px;
+  border:4px solid #8b5a2b;
+  box-shadow:4px 4px 0 #000;
+  white-space:nowrap;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;z-index:50;
+  text-shadow:2px 2px 0 #000;
+  letter-spacing:1px;
+  line-height:1.8;
+}
+#msg.on{opacity:1}
+
+/* ============ PROGRESO ============ */
+#progressRow{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:12px;
+  width:100%;
+  padding:0 8px;
+}
+#progressText{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(9px,1.2vw,12px);
+  color:#ffcc00;
+  text-shadow:2px 2px 0 #000;
+  white-space:nowrap;
+}
+#progressBar{
+  flex:1;
+  max-width:380px;
+  height:18px;
+  background:#300;
+  border:3px solid #fff;
+  box-shadow:3px 3px 0 #000,inset 0 0 0 2px #000;
+  overflow:hidden;
+  position:relative;
+}
+#progressFill{
+  height:100%;
+  width:0;
+  background-color:#00ff00;
+  background-image:repeating-linear-gradient(90deg,
+    #00ff00,#00ff00 8px,
+    #00cc00 8px,#00cc00 16px);
+  transition:width .4s ease;
+  box-shadow:inset 0 0 0 2px #fff;
+}
+
+/* ============ VICTORIA ============ */
+#winScreen{background:linear-gradient(180deg,#1a1a2e 0%,#2a1a3e 50%,#1a1a2e 100%)}
+#winScreen .bigTitle{
+  font-size:clamp(24px,5.5vw,48px);
+  color:#ffcc00;
+  text-shadow:4px 4px 0 #ff6600,8px 8px 0 #000;
+  animation:winPulse 1.2s ease-in-out infinite;
+  margin-bottom:14px;
+}
+@keyframes winPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+#winNumberDisplay{
+  font-family:'Press Start 2P',monospace;
+  font-size:clamp(90px,20vw,220px);
+  color:#fff;
+  text-shadow:
+    4px 4px 0 #ff6600,
+    8px 8px 0 #ff3300,
+    12px 12px 0 #000;
+  margin:8px 0 16px;
+  letter-spacing:8px;
+  line-height:1;
+}
+#winButtons{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+
+/* Clon flotante */
+#dragGhost{
+  position:fixed;
+  pointer-events:none;
+  z-index:9999;
+  display:none;
+  box-shadow:
+    0 8px 0 rgba(0,0,0,.4),
+    0 0 40px rgba(255,204,0,.85);
+}
+#dragGhost.on{display:flex}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width:900px){
+  #topbar{flex-wrap:wrap;justify-content:center;gap:6px}
+  #title{font-size:11px;order:-1;width:100%;text-align:center;margin-bottom:4px}
+  #lvlGrid{grid-template-columns:repeat(5,1fr);gap:10px;padding:14px;max-height:60vh}
+  .lvlBtn{min-height:54px;font-size:14px}
+  .stepsBox{padding:16px 18px;gap:12px}
+  #gameArea{gap:clamp(20px, 4vw, 50px)}
+}
+@media (min-width:901px) and (max-width:1366px){
+  .pxbtn{font-size:12px;padding:14px 20px;min-height:56px}
+  .bigBtn{font-size:16px;padding:22px 48px;min-height:80px}
+  .step{font-size:14px}
+  .bigPiece, .bigSlot{width:clamp(180px, 20vw, 260px); height:clamp(180px, 20vw, 260px); font-size:clamp(80px, 11vw, 150px)}
+}
+@media (max-width:600px){
+  .bigPiece, .bigSlot{
+    width:clamp(110px, 40vw, 170px);
+    height:clamp(110px, 40vw, 170px);
+    font-size:clamp(50px, 20vw, 90px);
+    border-width:5px;
+  }
+  .question{font-size:clamp(50px, 20vw, 90px)}
+  #lvlGrid{grid-template-columns:repeat(4,1fr);gap:8px;padding:10px}
+  .lvlBtn{min-height:50px;font-size:12px}
+  .pxbtn{font-size:9px;padding:10px 12px;min-height:48px}
+  .bigBtn{font-size:11px;padding:16px 28px;min-height:64px;min-width:240px}
+  .stepsBox{padding:14px 14px;gap:10px}
+  .step{font-size:9px;gap:10px;line-height:1.9}
+  .stepIcon{font-size:26px}
+  .arrow{font-size:36px}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ MENÚ ============ -->
+<div class="screen active" id="menuScreen">
+  <div class="bigTitle">🧩 EL ROMPECABEZAS 🧩<br>DE LOS NÚMEROS</div>
+  <div class="bigText">
+    Arrastra el número a su lugar<br>
+    ¡Es muy fácil!
+  </div>
+  <button class="bigBtn" id="btnPlay">▶ JUGAR</button><br>
+  <button class="bigBtn purple" id="btnHelp">❓ CÓMO JUGAR</button><br>
+  <button class="bigBtn red" id="btnMenuKinder">🧸 KINDER</button>
+</div>
+
+<!-- ============ AYUDA ============ -->
+<div class="screen" id="helpScreen">
+  <div class="bigTitle">❓ CÓMO JUGAR</div>
+  <div class="stepsBox">
+    <div class="step"><div class="stepIcon">👆</div><div>Arrastra el número amarillo</div></div>
+    <div class="step"><div class="stepIcon">🎯</div><div>Suéltalo en el lugar con "?"</div></div>
+    <div class="step"><div class="stepIcon">✅</div><div>¡Si es el correcto, se pone verde!</div></div>
+    <div class="step"><div class="stepIcon">⭐</div><div>Cada nivel tiene 1 solo número</div></div>
+    <div class="step"><div class="stepIcon">🔓</div><div>¡Y se desbloquea el siguiente!</div></div>
+  </div>
+  <button class="bigBtn purple" id="btnHelpBack">⬅ VOLVER</button>
+</div>
+
+<!-- ============ NIVELES ============ -->
+<div class="screen" id="levelsScreen">
+  <div class="bigTitle">🎯 ELIGE UN NÚMERO</div>
+  <div id="lvlGrid"></div>
+  <button class="bigBtn red" id="btnLvlBack">⬅ VOLVER</button>
+</div>
+
+<!-- ============ JUEGO ============ -->
+<div class="screen" id="gameScreen">
+  <div id="topbar">
+    <button class="pxbtn" id="btnMenu">🧸 KINDER</button>
+    <div id="title">🧩 EL ROMPECABEZAS</div>
+    <div id="lvlInfo">NÚMERO <span id="lvlNum">1</span>/25</div>
+    <button class="pxbtn orange" id="btnReset">🔄 REINICIAR</button>
+  </div>
+
+  <div id="progressRow">
+    <div id="progressText">0 de 1</div>
+    <div id="progressBar"><div id="progressFill"></div></div>
+  </div>
+
+  <div id="gameArea">
+    <!-- PIEZA (izquierda) -->
+    <div class="bigZone">
+      <div class="bigZoneTitle">🔢 ARRASTRA</div>
+      <div class="bigPiece" id="thePiece">1</div>
+    </div>
+
+    <!-- FLECHA -->
+    <div class="arrow">➡</div>
+
+    <!-- SLOT (derecha) -->
+    <div class="bigZone">
+      <div class="bigZoneTitle">🧩 SU LUGAR</div>
+      <div class="bigSlot hint" id="theSlot">
+        <span class="question">?</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ VICTORIA ============ -->
+<div class="screen" id="winScreen">
+  <div class="bigTitle">🎉 ¡MUY BIEN! 🎉</div>
+  <div class="bigText" id="winText">¡Colocaste el número!</div>
+  <div id="winNumberDisplay">1</div>
+  <div id="winButtons">
+    <button class="bigBtn" id="btnNext">➡ SIGUIENTE</button>
+    <button class="bigBtn purple" id="btnRepeatLevel">🔄 REPETIR</button>
+    <button class="bigBtn orange" id="btnWinLevels">🎯 NÚMEROS</button>
+    <button class="bigBtn red" id="btnWinKinder">🧸 KINDER</button>
+  </div>
+</div>
+
+<div id="msg"></div>
+<div id="dragGhost" class="bigPiece"></div>
+
+<script>
+const LEVELS = Array.from({ length: 25 }, (_, i) => i + 1);
+
+const state = {
+  level: 0,
+  completed: [],
+  dragging: false,
+  dragEl: null,
+  dragPointerId: null,
+  dragMoved: false,
+  dragStartX: 0,
+  dragStartY: 0,
+  placed: false
+};
+
+try{
+  const saved = localStorage.getItem('rompecabezas_simple_progress');
+  if(saved) state.completed = JSON.parse(saved);
+}catch(e){}
+function saveProgress(){
+  try{ localStorage.setItem('rompecabezas_simple_progress', JSON.stringify(state.completed)); }catch(e){}
+}
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  const t = document.getElementById(id);
+  if(t) t.classList.add('active');
+}
+
+/* ============================================
+   ✅ FUNCIÓN PARA VOLVER A KINDER.HTML
+   ============================================ */
+function salirAKinder(){
+  window.location.href = 'Kinder.html';
+}
+
+/* ============================================
+   BOTONES
+   ============================================ */
+document.getElementById('btnPlay').onclick = () => { showScreen('levelsScreen'); renderLevelGrid(); };
+document.getElementById('btnHelp').onclick = () => showScreen('helpScreen');
+document.getElementById('btnHelpBack').onclick = () => showScreen('menuScreen');
+document.getElementById('btnLvlBack').onclick = () => showScreen('menuScreen');
+document.getElementById('btnMenu').onclick = salirAKinder;
+document.getElementById('btnMenuKinder').onclick = salirAKinder;
+document.getElementById('btnWinKinder').onclick = salirAKinder;
+document.getElementById('btnReset').onclick = () => { startLevel(state.level); showMsg('🔄 Nivel reiniciado'); };
+document.getElementById('btnNext').onclick = () => {
+  if(state.level < LEVELS.length - 1) startLevel(state.level + 1);
+  else { showScreen('levelsScreen'); renderLevelGrid(); }
+};
+document.getElementById('btnRepeatLevel').onclick = () => startLevel(state.level);
+document.getElementById('btnWinLevels').onclick = () => { showScreen('levelsScreen'); renderLevelGrid(); };
+
+/* ============================================
+   GRID DE NIVELES (25)
+   ============================================ */
+function renderLevelGrid(){
+  const grid = document.getElementById('lvlGrid');
+  grid.innerHTML = '';
+  for(let i = 0; i < LEVELS.length; i++){
+    const btn = document.createElement('div');
+    btn.className = 'lvlBtn';
+    btn.textContent = i + 1;
+    const isDone = state.completed.includes(i);
+    const isUnlocked = i === 0 || state.completed.includes(i - 1) || isDone;
+    if(isDone) btn.classList.add('done');
+    if(!isUnlocked) btn.classList.add('locked');
+    if(isUnlocked) btn.addEventListener('click', () => startLevel(i));
+    grid.appendChild(btn);
+  }
+}
+
+/* ============================================
+   INICIAR NIVEL
+   ============================================ */
+function startLevel(levelIndex){
+  state.level = levelIndex;
+  state.placed = false;
+  state.dragging = false;
+  state.dragEl = null;
+  state.dragPointerId = null;
+  state.dragMoved = false;
+
+  const num = LEVELS[levelIndex];
+
+  document.getElementById('lvlNum').textContent = levelIndex + 1;
+
+  const piece = document.getElementById('thePiece');
+  piece.textContent = num;
+  piece.dataset.num = num;
+  piece.className = 'bigPiece';
+  piece.style.display = 'flex';
+
+  const slot = document.getElementById('theSlot');
+  slot.dataset.num = num;
+  slot.className = 'bigSlot hint';
+  slot.innerHTML = '<span class="question">?</span>';
+
+  piece.onpointerdown = onPiecePointerDown;
+  slot.onclick = handleSlotTap;
+
+  updateProgress();
+  showScreen('gameScreen');
+}
+
+/* ============================================
+   TAP EN SLOT
+   ============================================ */
+function handleSlotTap(){
+  const piece = document.getElementById('thePiece');
+  if(piece.classList.contains('selected')){
+    tryPlace();
+  } else if(piece.classList.contains('used')){
+    // ya colocado
+  } else {
+    piece.classList.add('selected');
+    showMsg('👆 Toca el lugar con "?"');
+    playBeep(660, .08, .08);
+  }
+}
+
+/* ============================================
+   DRAG & DROP
+   ============================================ */
+const TAP_THRESHOLD = 8;
+
+function onPiecePointerDown(e){
+  const piece = e.currentTarget;
+  if(piece.classList.contains('used')) return;
+  e.preventDefault();
+
+  state.dragging = true;
+  state.dragEl = piece;
+  state.dragPointerId = e.pointerId;
+  state.dragStartX = e.clientX;
+  state.dragStartY = e.clientY;
+  state.dragMoved = false;
+
+  document.addEventListener('pointermove', onGlobalPointerMove);
+  document.addEventListener('pointerup', onGlobalPointerUp);
+  document.addEventListener('pointercancel', onGlobalPointerUp);
+}
+
+function onGlobalPointerMove(e){
+  if(!state.dragging || !state.dragEl) return;
+  if(e.pointerId !== state.dragPointerId) return;
+
+  const dx = e.clientX - state.dragStartX;
+  const dy = e.clientY - state.dragStartY;
+  const dist = Math.hypot(dx, dy);
+
+  if(!state.dragMoved && dist > TAP_THRESHOLD){
+    state.dragMoved = true;
+    state.dragEl.classList.add('dragging');
+    state.dragEl.classList.remove('selected');
+
+    const ghost = document.getElementById('dragGhost');
+    const rect = state.dragEl.getBoundingClientRect();
+    ghost.textContent = state.dragEl.textContent;
+    ghost.className = 'bigPiece on';
+    ghost.style.width = rect.width + 'px';
+    ghost.style.height = rect.height + 'px';
+    ghost.style.fontSize = window.getComputedStyle(state.dragEl).fontSize;
+
+    document.getElementById('theSlot').classList.add('dragover');
+  }
+
+  if(state.dragMoved){
+    positionGhost(e.clientX, e.clientY);
+    const slot = document.getElementById('theSlot');
+    if(slot.classList.contains('completed')) return;
+    const r = slot.getBoundingClientRect();
+    const inside = e.clientX >= r.left - 30 && e.clientX <= r.right + 30
+                && e.clientY >= r.top - 30 && e.clientY <= r.bottom + 30;
+    slot.classList.toggle('dragover', inside);
+  }
+}
+
+function onGlobalPointerUp(e){
+  if(!state.dragging || !state.dragEl) return;
+  if(e.pointerId !== state.dragPointerId) return;
+
+  document.removeEventListener('pointermove', onGlobalPointerMove);
+  document.removeEventListener('pointerup', onGlobalPointerUp);
+  document.removeEventListener('pointercancel', onGlobalPointerUp);
+
+  const piece = state.dragEl;
+
+  const ghost = document.getElementById('dragGhost');
+  ghost.classList.remove('on');
+  ghost.style.left = '-9999px';
+
+  document.getElementById('theSlot').classList.remove('dragover');
+
+  if(state.dragMoved){
+    piece.classList.remove('dragging');
+    const slot = findSlotAtPoint(e.clientX, e.clientY);
+    if(slot){
+      tryPlace();
+    } else {
+      showMsg('🎯 Suelta sobre el lugar con "?"');
+    }
+  } else {
+    if(piece.classList.contains('selected')){
+      piece.classList.remove('selected');
+    } else {
+      piece.classList.add('selected');
+      showMsg('👆 Ahora toca el lugar con "?"');
+      playBeep(660, .08, .08);
+    }
+  }
+
+  state.dragging = false;
+  state.dragEl = null;
+  state.dragPointerId = null;
+  state.dragMoved = false;
+}
+
+function findSlotAtPoint(x, y){
+  const slot = document.getElementById('theSlot');
+  if(slot.classList.contains('completed')) return null;
+  const r = slot.getBoundingClientRect();
+  const TOLERANCE = 40;
+  if(x >= r.left - TOLERANCE && x <= r.right + TOLERANCE
+     && y >= r.top - TOLERANCE && y <= r.bottom + TOLERANCE){
+    return slot;
+  }
+  return null;
+}
+
+function positionGhost(cx, cy){
+  const ghost = document.getElementById('dragGhost');
+  ghost.style.left = (cx - ghost.offsetWidth / 2) + 'px';
+  ghost.style.top = (cy - ghost.offsetHeight / 2) + 'px';
+}
+
+/* ============================================
+   COLOCAR PIEZA
+   ============================================ */
+function tryPlace(){
+  if(state.placed) return;
+
+  const piece = document.getElementById('thePiece');
+  const slot = document.getElementById('theSlot');
+
+  if(piece.classList.contains('used')) return;
+  if(slot.classList.contains('completed')) return;
+
+  const num = piece.dataset.num;
+
+  slot.classList.add('completed');
+  slot.classList.remove('hint','dragover');
+  slot.textContent = num;
+
+  piece.classList.add('used');
+  piece.classList.remove('selected');
+
+  state.placed = true;
+  updateProgress();
+
+  playBeep(880, .1, .1);
+  playBeep(1047, .12, .09, 'sine', 100);
+  showMsg('✅ ¡Muy bien!');
+
+  setTimeout(() => levelComplete(), 800);
+}
+
+function updateProgress(){
+  const done = state.placed ? 1 : 0;
+  const percent = done * 100;
+  document.getElementById('progressText').textContent = `${done} de 1`;
+  document.getElementById('progressFill').style.width = percent + '%';
+}
+
+/* ============================================
+   NIVEL COMPLETADO
+   ============================================ */
+function levelComplete(){
+  if(!state.completed.includes(state.level)){
+    state.completed.push(state.level);
+    saveProgress();
+  }
+  playFanfare();
+
+  const num = LEVELS[state.level];
+  const isLast = state.level === LEVELS.length - 1;
+
+  document.getElementById('winNumberDisplay').textContent = num;
+
+  if(isLast){
+    document.getElementById('winText').textContent = '🏆 ¡FELICIDADES! ¡Completaste los 25 números!';
+    document.getElementById('btnNext').style.display = 'none';
+  } else {
+    document.getElementById('winText').textContent = `¡Colocaste el número ${num}!`;
+    document.getElementById('btnNext').style.display = 'inline-block';
+  }
+
+  showScreen('winScreen');
+}
+
+/* ============================================
+   MENSAJES
+   ============================================ */
+let msgTimer = null;
+function showMsg(text, ms = 1500){
+  const el = document.getElementById('msg');
+  el.textContent = text;
+  el.classList.add('on');
+  clearTimeout(msgTimer);
+  msgTimer = setTimeout(() => el.classList.remove('on'), ms);
+}
+
+/* ============================================
+   AUDIO
+   ============================================ */
+let AC = null;
+function initAudio(){
+  if(!AC){
+    try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }
+    catch(e){ AC = null; }
+  }
+  if(AC && AC.state === 'suspended') AC.resume();
+}
+function playBeep(freq, dur, vol, type, delay){
+  initAudio();
+  if(!AC) return;
+  const start = (delay || 0) / 1000;
+  try{
+    const t0 = AC.currentTime + start;
+    const o = AC.createOscillator(), g = AC.createGain(), lp = AC.createBiquadFilter();
+    o.type = type || 'sine';
+    o.frequency.setValueAtTime(freq, t0);
+    lp.type = 'lowpass'; lp.frequency.value = 4200; lp.Q.value = .6;
+    g.gain.setValueAtTime(.0001, t0);
+    g.gain.exponentialRampToValueAtTime(vol, t0 + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + dur + .05);
+    o.connect(lp); lp.connect(g); g.connect(AC.destination);
+    o.start(t0); o.stop(t0 + dur + .1);
+  }catch(e){}
+}
+function playFanfare(){
+  [523, 659, 784, 1047].forEach((f, i) => playBeep(f, .28, .12, 'sine', i * 130));
+}
+
+/* Prevenir zoom */
+let lastTouch = 0;
+document.addEventListener('touchend', e => {
+  const now = Date.now();
+  if(now - lastTouch <= 300) e.preventDefault();
+  lastTouch = now;
+}, { passive:false });
+document.addEventListener('gesturestart', e => e.preventDefault());
+
+/* ============================================
+   INICIO
+   ============================================ */
+renderLevelGrid();
+</script>
+</body>
+</html>

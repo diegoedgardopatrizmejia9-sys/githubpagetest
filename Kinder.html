@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="Logo de MS/Captura de pantalla 2026-10-08 173318.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Juegos de Kinder - Modular studies</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            background-color: #1a1a2e;
+            background-image:
+                linear-gradient(45deg, #16213e 25%, transparent 25%),
+                linear-gradient(-45deg, #16213e 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #16213e 75%),
+                linear-gradient(-45deg, transparent 75%, #16213e 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* ============================================
+           BARRA SUPERIOR CON BOTÓN VOLVER
+           ============================================ */
+        .barra-superior {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 100;
+        }
+
+        .boton-volver {
+            background-color: #ff7675;
+            background-image:
+                repeating-linear-gradient(45deg,
+                    #ff7675,
+                    #ff7675 6px,
+                    #d63031 6px,
+                    #d63031 12px);
+            border: 4px solid #ffffff;
+            padding: 12px 20px;
+            font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+            font-weight: bold;
+            color: #ffffff;
+            cursor: pointer;
+            box-shadow:
+                5px 5px 0 #8b1e1e,
+                inset -3px -3px 0 rgba(0,0,0,0.3),
+                inset 3px 3px 0 rgba(255,255,255,0.3);
+            transition: all 0.1s steps(2);
+            font-family: inherit;
+            min-height: 48px;
+            min-width: 100px;
+            text-shadow: 2px 2px 0 #000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        @media (hover: hover) {
+            .boton-volver:hover {
+                transform: translate(-2px, -2px);
+                box-shadow:
+                    7px 7px 0 #8b1e1e,
+                    inset -3px -3px 0 rgba(0,0,0,0.3),
+                    inset 3px 3px 0 rgba(255,255,255,0.3);
+            }
+        }
+
+        .boton-volver:active {
+            transform: translate(3px, 3px);
+            box-shadow:
+                2px 2px 0 #8b1e1e,
+                inset -3px -3px 0 rgba(0,0,0,0.3),
+                inset 3px 3px 0 rgba(255,255,255,0.3);
+        }
+
+        /* ============================================
+           CONTENEDOR PRINCIPAL
+           ============================================ */
+        .contenedor-principal {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 1200px;
+            padding: 70px 20px 20px;
+            animation: aparecer-pixel 0.5s steps(5) forwards;
+        }
+
+        @keyframes aparecer-pixel {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ============================================
+           ENCABEZADO
+           ============================================ */
+        .encabezado {
+            text-align: center;
+            margin-bottom: 40px;
+            width: 100%;
+        }
+
+        .titulo-kinder {
+            font-size: clamp(1rem, 3vw, 2rem);
+            color: #ffcc00;
+            text-shadow:
+                3px 3px 0 #ff6600,
+                6px 6px 0 #000;
+            margin-bottom: 20px;
+            line-height: 1.8;
+            animation: flotar-pixel 2s steps(4) infinite;
+        }
+
+        @keyframes flotar-pixel {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .subtitulo-kinder {
+            font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+            color: #fff;
+            background-color: #333;
+            padding: 12px 20px;
+            border: 4px solid #fff;
+            display: inline-block;
+            line-height: 1.8;
+            box-shadow:
+                4px 4px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.2);
+        }
+
+        /* ============================================
+           GRID DE JUEGOS (estilo Friv)
+           ============================================ */
+        .grid-juegos {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            gap: 25px;
+            width: 100%;
+            padding: 25px;
+            background-color: #0f0f23;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, #1a1a3e 2px, #1a1a3e 4px);
+            border: 6px solid #fff;
+            box-shadow:
+                8px 8px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.5);
+        }
+
+        /* ============================================
+           TARJETA DE JUEGO
+           ============================================ */
+        .tarjeta-juego {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-decoration: none;
+            color: #fff;
+            border: 5px solid #fff;
+            background-color: #4a5fc1;
+            background-image:
+                repeating-linear-gradient(45deg,
+                    #4a5fc1,
+                    #4a5fc1 8px,
+                    #667eea 8px,
+                    #667eea 16px);
+            cursor: pointer;
+            transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+            box-shadow:
+                6px 6px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.3);
+            overflow: hidden;
+            position: relative;
+            min-width: 48px;
+            min-height: 48px;
+        }
+
+        @media (hover: hover) {
+            .tarjeta-juego:hover {
+                transform: translate(-4px, -4px);
+                box-shadow:
+                    10px 10px 0 #000,
+                    inset -4px -4px 0 rgba(0,0,0,0.3),
+                    inset 4px 4px 0 rgba(255,255,255,0.3);
+            }
+        }
+
+        .tarjeta-juego:active {
+            transform: translate(3px, 3px);
+            box-shadow:
+                3px 3px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.3);
+        }
+
+        /* Thumbnail del juego */
+        .thumbnail-juego {
+            width: 100%;
+            aspect-ratio: 1 / 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #fff9c4;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    #fff9c4,
+                    #fff9c4 8px,
+                    #ffeaa7 8px,
+                    #ffeaa7 16px);
+            border-bottom: 5px solid #fff;
+            font-size: clamp(3rem, 7vw, 5rem);
+            text-shadow: 4px 4px 0 rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .thumbnail-juego .emoji-juego {
+            animation: rebotar-pixel 1.5s steps(4) infinite;
+            filter: drop-shadow(4px 4px 0 rgba(0,0,0,0.2));
+        }
+
+        @keyframes rebotar-pixel {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        /* Si usas una imagen en lugar de emoji */
+        .thumbnail-juego img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            image-rendering: pixelated;
+        }
+
+        /* Nombre del juego debajo del thumbnail */
+        .nombre-juego {
+            width: 100%;
+            padding: 15px 10px;
+            background-color: #2d3436;
+            background-image:
+                repeating-linear-gradient(-45deg,
+                    #2d3436,
+                    #2d3436 6px,
+                    #1a1a2e 6px,
+                    #1a1a2e 12px);
+            color: #ffcc00;
+            font-size: clamp(0.55rem, 1.2vw, 0.75rem);
+            font-weight: bold;
+            text-align: center;
+            line-height: 1.8;
+            text-shadow:
+                2px 2px 0 #000,
+                3px 3px 0 #ff6600;
+            border-top: 5px solid #fff;
+            letter-spacing: 1px;
+        }
+
+        /* ============================================
+           OPTIMIZACIÓN TABLETS (768px - 1366px)
+           ============================================ */
+        @media (min-width: 768px) and (max-width: 1366px) {
+            body { padding: 15px; }
+
+            .contenedor-principal {
+                max-width: 1200px;
+                padding: 70px 25px 25px;
+            }
+
+            .grid-juegos {
+                grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+                gap: 28px;
+                padding: 30px;
+            }
+
+            .thumbnail-juego {
+                font-size: 6rem;
+            }
+
+            .nombre-juego {
+                font-size: 0.75rem;
+                padding: 18px 10px;
+            }
+
+            .titulo-kinder {
+                margin-bottom: 25px;
+            }
+        }
+
+        /* Tablet horizontal (paisaje) */
+        @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+            .grid-juegos {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 30px;
+            }
+
+            .thumbnail-juego {
+                font-size: 6.5rem;
+            }
+        }
+
+        /* Tablet pequeña vertical (iPad Mini) */
+        @media (min-width: 768px) and (max-width: 900px) and (orientation: portrait) {
+            .grid-juegos {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 22px;
+            }
+
+            .thumbnail-juego {
+                font-size: 5rem;
+            }
+        }
+
+        /* ============================================
+           MÓVILES
+           ============================================ */
+        @media (max-width: 767px) {
+            body { padding: 15px; }
+
+            .barra-superior {
+                top: 10px;
+                left: 10px;
+            }
+
+            .boton-volver {
+                padding: 10px 15px;
+                font-size: 0.55rem;
+                min-width: 80px;
+            }
+
+            .contenedor-principal {
+                padding: 70px 10px 15px;
+            }
+
+            .grid-juegos {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .thumbnail-juego {
+                font-size: 3.5rem;
+            }
+
+            .nombre-juego {
+                font-size: 0.5rem;
+                padding: 12px 6px;
+                line-height: 1.6;
+            }
+
+            .titulo-kinder {
+                font-size: 1rem;
+            }
+
+            .subtitulo-kinder {
+                font-size: 0.5rem;
+                padding: 10px 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-juegos {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .thumbnail-juego {
+                font-size: 4rem;
+            }
+
+            .nombre-juego {
+                font-size: 0.55rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BARRA SUPERIOR CON BOTÓN VOLVER -->
+    <div class="barra-superior">
+        <a href="InicioDelFriv.html" class="boton-volver">
+            ⬅️ Inicio
+        </a>
+    </div>
+
+    <!-- CONTENEDOR PRINCIPAL -->
+    <div class="contenedor-principal">
+
+        <!-- Encabezado -->
+        <div class="encabezado">
+            <h1 class="titulo-kinder">🧸 JUEGOS DE KINDER 🧸</h1>
+            <p class="subtitulo-kinder">
+                🎮 ELIGE UN JUEGO PARA COMENZAR 🎮
+            </p>
+        </div>
+
+        <!-- Grid de juegos (estilo Friv) -->
+        <div class="grid-juegos">
+
+            <!-- ===== TARJETA 1: MEMORY CARDS ===== -->
+            <a href="MEMORY CARDS.html" class="tarjeta-juego">
+                <div class="thumbnail-juego">
+                    <span class="emoji-juego">🧠</span>
+                </div>
+                <div class="nombre-juego">
+                    MEMORY CARDS
+                </div>
+            </a>
+
+            <!-- ===== TARJETA 2: LOS NÚMEROS ===== -->
+            <a href="Los numeros.html" class="tarjeta-juego">
+                <div class="thumbnail-juego">
+                    <span class="emoji-juego">🔢</span>
+                </div>
+                <div class="nombre-juego">
+                    LOS NÚMEROS
+                </div>
+            </a>
+
+            <!-- ===== TARJETA 3: ROMPECABEZAS ===== -->
+            <a href="RompeCabezas.html" class="tarjeta-juego">
+                <div class="thumbnail-juego">
+                    <span class="emoji-juego">🧩</span>
+                </div>
+                <div class="nombre-juego">
+                    ROMPECABEZAS
+                </div>
+            </a>
+
+            <!-- ===== TARJETA 4: LECTOESCRITURA ===== -->
+<a href="LectoEscritura.html" class="tarjeta-juego">
+    <div class="thumbnail-juego">
+        <span class="emoji-juego">✏️</span>
+    </div>
+    <div class="nombre-juego">
+        TRAZA Y APRENDE
+    </div>
+</a>
+
+        </div>
+        
+
+    </div>
+
+</body>
+</html>

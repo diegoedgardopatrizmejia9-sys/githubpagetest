@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <link rel="icon" type="image/png" href="Logo de MS/Captura de pantalla 2026-10-08 173318.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Modular studies - Pixel Art</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <style>
+        /* ============================================
+           ESTILOS GENERALES - PIXEL ART
+           ============================================ */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Press Start 2P', 'Courier New', monospace;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            overscroll-behavior: none;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        body {
+            background-color: #1a1a2e;
+            background-image:
+                linear-gradient(45deg, #16213e 25%, transparent 25%),
+                linear-gradient(-45deg, #16213e 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, #16213e 75%),
+                linear-gradient(-45deg, transparent 75%, #16213e 75%);
+            background-size: 20px 20px;
+            background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+            color: #fff;
+            padding: 20px;
+        }
+
+        /* ============================================
+           PANTALLA DE CARGA
+           ============================================ */
+        #pantalla-carga {
+            position: fixed;
+            inset: 0;
+            background-color: #0f0f23;
+            background-image:
+                repeating-linear-gradient(0deg, transparent, transparent 2px, #1a1a3e 2px, #1a1a3e 4px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 20px;
+        }
+
+        #pantalla-carga.oculto {
+            opacity: 0;
+            visibility: hidden;
+        }
+
+        .logo-equipo {
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow:
+                3px 3px 0 #ff6600,
+                6px 6px 0 #cc3300,
+                9px 9px 0 #000;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            text-align: center;
+            animation: parpadeo-pixel 1s steps(2) infinite;
+            padding: 0 20px;
+            line-height: 1.5;
+        }
+
+        @keyframes parpadeo-pixel {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+
+        .contenedor-barra {
+            width: 70%;
+            max-width: 500px;
+            height: clamp(32px, 5vw, 44px);
+            background-color: #333;
+            border: 4px solid #fff;
+            box-shadow:
+                4px 4px 0 #000,
+                inset -4px -4px 0 #222;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .barra-progreso {
+            height: 100%;
+            width: 0%;
+            background-color: #00ff00;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    #00ff00,
+                    #00ff00 8px,
+                    #00cc00 8px,
+                    #00cc00 16px);
+            animation: llenar 5s steps(20) forwards;
+            box-shadow: inset 0 0 0 2px #fff;
+        }
+
+        @keyframes llenar {
+            from { width: 0%; }
+            to { width: 100%; }
+        }
+
+        .texto-carga {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffffff;
+            font-weight: bold;
+            font-size: clamp(0.5rem, 1.2vw, 0.75rem);
+            text-shadow: 2px 2px 0 #000;
+            z-index: 2;
+            white-space: nowrap;
+        }
+
+        /* ============================================
+           MENÚ DE SELECCIÓN DE GRADOS
+           ============================================ */
+        #menu-grados {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            padding: 30px 20px;
+            animation: aparecer-pixel 0.5s steps(5) forwards;
+        }
+
+        #menu-grados.visible {
+            display: flex;
+        }
+
+        @keyframes aparecer-pixel {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .titulo-menu {
+            font-size: clamp(1rem, 3vw, 2rem);
+            color: #ffcc00;
+            text-shadow:
+                3px 3px 0 #ff6600,
+                6px 6px 0 #000;
+            margin-bottom: 40px;
+            text-align: center;
+            animation: flotar-pixel 2s steps(4) infinite;
+            line-height: 1.8;
+        }
+
+        @keyframes flotar-pixel {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
+        }
+
+        .contenedor-botones {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .boton-grado {
+            flex: 1 1 280px;
+            max-width: 340px;
+            min-height: 320px;
+            border: 6px solid #fff;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 25px;
+            transition: transform 0.1s steps(2), box-shadow 0.1s steps(2);
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            box-shadow:
+                8px 8px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.3);
+        }
+
+        .boton-grado:hover {
+            transform: translate(-4px, -4px);
+            box-shadow:
+                12px 12px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.3);
+        }
+
+        .boton-grado:active {
+            transform: translate(4px, 4px);
+            box-shadow:
+                4px 4px 0 #000,
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.3);
+        }
+
+        .boton-kinder {
+            background-color: #ff9a9e;
+            background-image:
+                repeating-linear-gradient(45deg,
+                    #ff9a9e,
+                    #ff9a9e 10px,
+                    #ffb3b7 10px,
+                    #ffb3b7 20px);
+        }
+
+        .boton-kinder .emoji-grado {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 15px;
+            animation: rebotar-pixel 1s steps(2) infinite;
+            filter: drop-shadow(4px 4px 0 #000);
+        }
+
+        .boton-kinder .nombre-grado {
+            font-size: clamp(0.85rem, 2vw, 1.3rem);
+            color: #c0392b;
+            font-weight: bold;
+            text-shadow:
+                3px 3px 0 #fff,
+                6px 6px 0 #000;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .boton-primero {
+            background-color: #a8edea;
+            background-image:
+                repeating-linear-gradient(-45deg,
+                    #a8edea,
+                    #a8edea 10px,
+                    #c3f5f2 10px,
+                    #c3f5f2 20px);
+        }
+
+        .boton-primero .emoji-grado {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 15px;
+            animation: rebotar-pixel 1s steps(2) infinite 0.2s;
+            filter: drop-shadow(4px 4px 0 #000);
+        }
+
+        .boton-primero .nombre-grado {
+            font-size: clamp(0.85rem, 2vw, 1.3rem);
+            color: #2980b9;
+            font-weight: bold;
+            text-shadow:
+                3px 3px 0 #fff,
+                6px 6px 0 #000;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .boton-segundo {
+            background-color: #f6d365;
+            background-image:
+                repeating-linear-gradient(45deg,
+                    #f6d365,
+                    #f6d365 10px,
+                    #fda085 10px,
+                    #fda085 20px);
+        }
+
+        .boton-segundo .emoji-grado {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            margin-bottom: 15px;
+            animation: rebotar-pixel 1s steps(2) infinite 0.4s;
+            filter: drop-shadow(4px 4px 0 #000);
+        }
+
+        .boton-segundo .nombre-grado {
+            font-size: clamp(0.85rem, 2vw, 1.3rem);
+            color: #d35400;
+            font-weight: bold;
+            text-shadow:
+                3px 3px 0 #fff,
+                6px 6px 0 #000;
+            margin-bottom: 15px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        @keyframes rebotar-pixel {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .logo-editable {
+            width: clamp(90px, 12vw, 120px);
+            height: clamp(90px, 12vw, 120px);
+            border: 4px dashed #fff;
+            background-color: rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: clamp(0.5rem, 1.2vw, 0.7rem);
+            text-align: center;
+            padding: 10px;
+            transition: background 0.1s steps(2);
+            box-shadow:
+                inset -4px -4px 0 rgba(0,0,0,0.3),
+                inset 4px 4px 0 rgba(255,255,255,0.2);
+            line-height: 1.8;
+        }
+
+        .logo-editable:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* ============================================
+           OPTIMIZACIÓN TABLETS (768px - 1366px)
+           ============================================ */
+        @media (min-width: 768px) and (max-width: 1366px) {
+            body { padding: 15px; }
+
+            .contenedor-botones {
+                gap: 25px;
+                max-width: 1100px;
+            }
+
+            .boton-grado {
+                flex: 1 1 300px;
+                max-width: 340px;
+                min-height: 380px;
+                padding: 30px 20px;
+                min-width: 48px;
+            }
+
+            .logo-editable {
+                width: 130px;
+                height: 130px;
+                font-size: 0.65rem;
+            }
+
+            .titulo-menu {
+                font-size: clamp(1.4rem, 3.5vw, 2.2rem);
+                margin-bottom: 50px;
+            }
+        }
+
+        /* Tablet horizontal - 3 columnas en fila */
+        @media (min-width: 1024px) and (max-width: 1366px) and (orientation: landscape) {
+            .boton-grado {
+                min-height: 340px;
+                max-width: 320px;
+            }
+
+            .contenedor-botones {
+                gap: 20px;
+            }
+        }
+
+        /* Tablet pequeña vertical (iPad Mini) */
+        @media (min-width: 768px) and (max-width: 900px) and (orientation: portrait) {
+            .boton-grado {
+                flex: 1 1 100%;
+                max-width: 500px;
+                min-height: 220px;
+                flex-direction: row;
+                gap: 25px;
+                padding: 20px 30px;
+            }
+
+            .boton-grado .nombre-grado {
+                margin-bottom: 0;
+                margin-right: 15px;
+            }
+
+            .logo-editable {
+                width: 100px;
+                height: 100px;
+                flex-shrink: 0;
+            }
+        }
+
+        /* ============================================
+           MÓVILES
+           ============================================ */
+        @media (max-width: 767px) {
+            .logo-equipo { font-size: 1.2rem; }
+            .titulo-menu { font-size: 1rem; }
+            .contenedor-botones {
+                flex-direction: column;
+                align-items: center;
+            }
+            .boton-grado {
+                width: 90%;
+                max-width: 350px;
+                min-height: 280px;
+            }
+            .nombre-grado {
+                font-size: 0.8rem !important;
+            }
+            .emoji-grado {
+                font-size: 2.5rem !important;
+            }
+            .logo-editable {
+                width: 100px;
+                height: 100px;
+                font-size: 0.5rem;
+            }
+            .texto-carga {
+                font-size: 0.55rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .logo-equipo { font-size: 1rem; }
+            .titulo-menu { font-size: 0.8rem; }
+            .boton-grado {
+                min-height: 240px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="pantalla-carga">
+        <div class="logo-equipo">Modular studies</div>
+        <div class="contenedor-barra">
+            <div class="barra-progreso"></div>
+            <div class="texto-carga">Cargando juegos...</div>
+        </div>
+    </div>
+
+    <div id="menu-grados">
+        <h1 class="titulo-menu">🎮 ¡Elige tu grado! 🎮</h1>
+
+        <div class="contenedor-botones">
+            <!-- ✅ BOTÓN KINDER: Ahora apunta a Kinder.html -->
+            <a href="Kinder.html" class="boton-grado boton-kinder">
+                <div class="emoji-grado">🧸</div>
+                <div class="nombre-grado">KINDER</div>
+                <div class="logo-editable">Tu logo aquí</div>
+            </a>
+
+            <a href="#" class="boton-grado boton-primero">
+                <div class="emoji-grado">✏️</div>
+                <div class="nombre-grado">PRIMER GRADO</div>
+                <div class="logo-editable">Tu logo aquí</div>
+            </a>
+
+            <a href="#" class="boton-grado boton-segundo">
+                <div class="emoji-grado">📚</div>
+                <div class="nombre-grado">SEGUNDO GRADO</div>
+                <div class="logo-editable">Tu logo aquí</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pantallaCarga = document.getElementById('pantalla-carga');
+            const menuGrados = document.getElementById('menu-grados');
+            const DURACION_CARGA = 5000;
+
+            setTimeout(function() {
+                pantallaCarga.classList.add('oculto');
+                menuGrados.classList.add('visible');
+                setTimeout(function() {
+                    pantallaCarga.style.display = 'none';
+                }, 800);
+            }, DURACION_CARGA);
+        });
+    </script>
+
+</body>
+</html>
